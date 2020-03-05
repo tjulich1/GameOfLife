@@ -4,6 +4,24 @@
 var canvas = document.getElementById("gameWorld");
 var ctx = canvas.getContext("2d");
 
+var socket = io.connect("http://24.16.255.56:8888");
+
+var cells = new Cells(280, 280, 2.5, ctx);
+
+document.getElementById("save").onclick = function() {
+    socket.emit("save", {studentname: "Trent Julich", statename: "savedCells", data: cells})
+};
+
+document.getElementById("load").onclick = function() {
+    socket.emit("load", {studentname: "Trent Julich", statename: "savedCells", data: cells});
+};
+
+socket.on("load", function (data) {
+    let newCells = new Cells(280, 280, 2.5, ctx);
+    newCells.cells = data.data.cells;
+    cells = newCells;
+});
+
 var gliderButton = document.getElementById("gliderState");
 gliderButton.addEventListener("click", function(){
     cells.initializeWithGlider();
@@ -16,7 +34,7 @@ randomButton.addEventListener("click", function() {
 
 var gosperButton = document.getElementById("gosperState");
 gosperButton.addEventListener("click", function() {
-   cells.initializeWithGosper(); 
+   cells.initializeWithGosper();
 });
 
 var cells = new Cells(280, 280, 2.5, ctx);
